@@ -1,0 +1,11 @@
+port: 5000
+deployment_folder: /opt/app
+wheel_file: Example-1.1.1-py3-none-any.whl
+instance_path: /opt/app/instance
+secret_key: "{{ vault_secret_key }}"
+db_path: "postgresql://app_user:{{ vault_db_password }}@localhost:5432/app_db"
+admin_groups:
+  - Read-only
+  - Read-write
+  - Super
+
