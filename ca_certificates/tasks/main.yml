@@ -1,0 +1,15 @@
+---
+- name: To installed standard CA certificates
+  apt:
+    name: ca-certificates
+    state: present
+
+- name: To install custom CA certificates
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/share/ca-certificates/
+  with_item:
+    - "{{ role_path }}/files/*.crt"
+  
+- name: Update CA certificates
+  command: update-ca-certificates
