@@ -43,6 +43,11 @@
     regexp: '^ADMIN_GROUPS=.*'
     replace: "ADMIN_GROUPS='{{ admin_groups }}'"
 
+- name: to deploy app.py file
+  copy:
+    src: "{{ role_path }}/files/app.py"
+    dest: "{{ deployment_folder }}/app.py"    
+
 - name: To deploy run.sh script
   copy:
     src: "{{ role_path }}/files/run.sh"
@@ -50,4 +55,4 @@
     mode: '0755'
 
 - name: To Run final application
-  command: "nohup {{ deployment_folder }}/run.sh &"
+  command: "nohup {{ deployment_folder }}/run.sh &"   # run.sh will call app.py application
