@@ -1,2 +1,53 @@
 ---
-# tasks file for app_deployment
+- name: To Create deployment directory
+  file:
+    path: "{{ deployment_folder }}"
+    state: directory
+
+- name: To create virtual environment
+  command: python3 -m venv {{ deployment_folder }}/venv
+
+- name: To install application
+  pip:
+    virtualenv: "{{ deployment_folder }}/venv"
+    name: "{{ role_path }}/files/Example-1.1.1-py3-none-any.whl"
+
+- name: To create instance directory
+  file:
+    path: "/opt/app/instance"
+    state: directory
+
+- name: To deploy configuration file
+  copy:
+    src: "{{ role_path }}/files/config.py"
+    dest: "/opt/app/instance/config.py"
+
+- name: To take backup of config.py file before modificatoin
+  command: cp /opt/app/instance/config.py /opt/app/instance/config_backup.py"
+
+- name: Replace secret_key in config.py
+  replace:
+    path: "/opt/app/instance/config.py"
+    regexp: '^SECRET_KEY=.*'
+    replace: "SECRET_KEY='{{ secret_key }}'"
+
+- name: Replace db_path in config.py
+  replace:
+    path: "/opt/app/instance/config.py"
+    regexp: '^DB_PATH=.*'
+    replace: "DB_PATH='{{ db_path }}'"
+
+- name: Replace admin_groups in config.py
+  replace:
+    path: "/opt/app/instance"/config.py"
+    regexp: '^ADMIN_GROUPS=.*'
+    replace: "ADMIN_GROUPS='{{ admin_groups }}'"
+
+- name: To deploy run.sh script
+  copy:
+    src: "{{ role_path }}/files/run.sh"
+    dest: "{{ deployment_folder }}/run.sh"
+    mode: '0755'
+
+- name: To Run final application
+  command: "nohup {{ deployment_folder }}/run.sh &"
